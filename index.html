@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026년 8월 경제활동인구조사 근로형태별 부가조사 대시보드</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+    * { font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="p-2.5 bg-indigo-500/20 border border-indigo-400/30 rounded-xl text-indigo-400">
+          <i class="fa-solid fa-chart-pie text-2xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-xs font-semibold bg-indigo-500/30 text-indigo-300 rounded border border-indigo-400/30">통계청 부가조사</span>
+            <span class="text-xs text-slate-400">2026.08 기준 (시계열 2019-2026)</span>
+          </div>
+          <h1 class="text-xl md:text-2xl font-bold tracking-tight">경제활동인구조사 근로형태별 부가조사 대시보드</h1>
+        </div>
+      </div>
+      <!-- Gender selector tab -->
+      <div class="flex items-center bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/60 self-start md:self-auto shadow-inner">
+        <button onclick="setGenderFilter('all')" id="btn-all" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm">전체</button>
+        <button onclick="setGenderFilter('male')" id="btn-male" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white">남성</button>
+        <button onclick="setGenderFilter('female')" id="btn-female" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white">여성</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- KPI Summary Cards -->
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-gauge-high text-indigo-600"></i>
+          <span id="kpi-target-title">2026년 8월 핵심 고용 지표 (전체)</span>
+        </h2>
+        <span class="text-xs text-slate-500">※ 단위: 천명, %, 전년(2025년) 대비</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- KPI 1: 임금근로자 -->
+        <div class="glass-card rounded-2xl p-5 hover:shadow-md transition">
+          <div class="flex items-center justify-between text-slate-500 mb-2">
+            <span class="text-sm font-medium">총 임금근로자</span>
+            <span class="p-2 rounded-lg bg-blue-50 text-blue-600"><i class="fa-solid fa-users"></i></span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-total-emp" class="text-3xl font-extrabold text-slate-900 tracking-tight">22,526</span>
+            <span class="text-sm font-semibold text-slate-500">천명</span>
+          </div>
+          <div class="mt-3 flex items-center text-xs" id="kpi-total-emp-diff">
+            <span class="text-emerald-600 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-arrow-trend-up"></i> +113천명 (+0.5%)
+            </span>
+            <span class="text-slate-400 ml-1.5">전년 대비</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: 정규직 -->
+        <div class="glass-card rounded-2xl p-5 hover:shadow-md transition">
+          <div class="flex items-center justify-between text-slate-500 mb-2">
+            <span class="text-sm font-medium">정규직 근로자</span>
+            <span class="p-2 rounded-lg bg-emerald-50 text-emerald-600"><i class="fa-solid fa-user-shield"></i></span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-reg-emp" class="text-3xl font-extrabold text-slate-900 tracking-tight">13,855</span>
+            <span class="text-sm font-semibold text-slate-500">천명</span>
+          </div>
+          <div class="mt-3 flex items-center text-xs" id="kpi-reg-emp-diff">
+            <span class="text-emerald-600 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-arrow-trend-up"></i> +10천명 (+0.1%)
+            </span>
+            <span class="text-slate-400 ml-1.5">전년 대비</span>
+          </div>
+        </div>
+
+        <!-- KPI 3: 비정규직 -->
+        <div class="glass-card rounded-2xl p-5 hover:shadow-md transition">
+          <div class="flex items-center justify-between text-slate-500 mb-2">
+            <span class="text-sm font-medium">비정규직 근로자</span>
+            <span class="p-2 rounded-lg bg-amber-50 text-amber-600"><i class="fa-solid fa-user-clock"></i></span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-nonreg-emp" class="text-3xl font-extrabold text-slate-900 tracking-tight">8,671</span>
+            <span class="text-sm font-semibold text-slate-500">천명</span>
+          </div>
+          <div class="mt-3 flex items-center text-xs" id="kpi-nonreg-emp-diff">
+            <span class="text-rose-600 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-arrow-trend-up"></i> +103천명 (+1.2%)
+            </span>
+            <span class="text-slate-400 ml-1.5">전년 대비</span>
+          </div>
+        </div>
+
+        <!-- KPI 4: 비정규직 비중 -->
+        <div class="glass-card rounded-2xl p-5 hover:shadow-md transition">
+          <div class="flex items-center justify-between text-slate-500 mb-2">
+            <span class="text-sm font-medium">비정규직 비중</span>
+            <span class="p-2 rounded-lg bg-indigo-50 text-indigo-600"><i class="fa-solid fa-percent"></i></span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-nonreg-ratio" class="text-3xl font-extrabold text-slate-900 tracking-tight">38.5</span>
+            <span class="text-sm font-semibold text-slate-500">%</span>
+          </div>
+          <div class="mt-3 flex items-center text-xs" id="kpi-nonreg-ratio-diff">
+            <span class="text-rose-600 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-arrow-trend-up"></i> +0.3%p
+            </span>
+            <span class="text-slate-400 ml-1.5">전년 대비 상승</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 1: 시계열 추이 및 근로형태 세분화 -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- 고용규모 추이 (2 cols) -->
+      <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-indigo-600"></i>
+              정규직 vs 비정규직 규모 및 비중 추이 (2019-2026)
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">정규직·비정규직 규모(좌축: 천명) 및 비정규직 비중(우축: %)</p>
+          </div>
+        </div>
+        <div class="h-80 w-full relative">
+          <canvas id="chart-trends"></canvas>
+        </div>
+      </div>
+
+      <!-- 세부 근로형태 도넛/바 (1 col) -->
+      <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-chart-pie text-indigo-600"></i>
+              비정규직 세부 유형 (2026년)
+            </h3>
+            <span class="text-xs px-2 py-0.5 bg-slate-100 rounded text-slate-600">중복 포함</span>
+          </div>
+          <p class="text-xs text-slate-500 mb-3">한시적, 시간제, 비전형 근로자의 규모 및 비중</p>
+          <div class="h-56 relative flex items-center justify-center">
+            <canvas id="chart-subtypes"></canvas>
+          </div>
+        </div>
+        <!-- Detail stats table -->
+        <div class="mt-4 pt-3 border-t border-slate-100 space-y-2 text-xs">
+          <div class="flex justify-between items-center text-slate-600">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>한시적 근로자</span>
+            <span class="font-bold text-slate-900" id="detail-term">6,035 천명</span>
+          </div>
+          <div class="flex justify-between items-center text-slate-600">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>시간제(파트타임)</span>
+            <span class="font-bold text-slate-900" id="detail-part">4,382 천명</span>
+          </div>
+          <div class="flex justify-between items-center text-slate-600">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>비전형(파견·용역·일일)</span>
+            <span class="font-bold text-slate-900" id="detail-atyp">1,786 천명</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: 연령대별 & 산업별 비정규직 분포 -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- 연령계층별 추이 -->
+      <div class="glass-card rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-users-viewfinder text-indigo-600"></i>
+            비정규직 연령계층별 비중 추이 (%)
+          </h3>
+          <span class="text-xs text-slate-500">60세 이상 급증세</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">고령화에 따라 60세 이상 비정규직 비중이 25.9% (2019) → 36.7% (2026)로 가파르게 확대</p>
+        <div class="h-72 w-full relative">
+          <canvas id="chart-age"></canvas>
+        </div>
+      </div>
+
+      <!-- 주요 산업별 비정규직 분포 (2026) -->
+      <div class="glass-card rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-industry text-indigo-600"></i>
+            주요 산업별 비정규직 비중 (2026년, Top 10)
+          </h3>
+          <span class="text-xs text-slate-500">단위: %</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">보건사회복지업(21.5%), 숙박음식업(9.9%), 사업시설지원(9.8%) 순</p>
+        <div class="h-72 w-full relative">
+          <canvas id="chart-industry"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: 정규직 vs 비정규직 근로조건 및 복지 격차 -->
+    <section class="glass-card rounded-2xl p-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6">
+        <div>
+          <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-scale-unbalanced text-indigo-600"></i>
+            정규직 vs 비정규직 근로조건 및 복지 격차 분석 (2026년)
+          </h3>
+          <p class="text-xs text-slate-500 mt-1">임금, 근속기간, 사회보험 가입률, 부가급부(퇴직급여, 상여금 등) 비교</p>
+        </div>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <span class="inline-flex items-center gap-1 px-3 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-full border border-emerald-200">
+            <i class="fa-solid fa-circle text-[8px]"></i> 정규직
+          </span>
+          <span class="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-700 font-semibold rounded-full border border-amber-200">
+            <i class="fa-solid fa-circle text-[8px]"></i> 비정규직
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Monthly Wage Card -->
+        <div class="bg-slate-50/80 rounded-xl p-5 border border-slate-200">
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-3">
+            <span>최근 3개월 월평균 임금</span>
+            <i class="fa-solid fa-won-sign text-indigo-500"></i>
+          </div>
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-600 font-medium">정규직</span>
+                <span class="font-bold text-emerald-600">405.2 만원</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-2">
+                <div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-600 font-medium">비정규직</span>
+                <span class="font-bold text-amber-600">211.2 만원</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-2">
+                <div class="bg-amber-500 h-2 rounded-full" style="width: 52.1%"></div>
+              </div>
+            </div>
+            <div class="pt-2 border-t border-slate-200 text-[11px] text-slate-500 flex justify-between">
+              <span>임금 격차 (정규직 대비)</span>
+              <span class="font-bold text-rose-500">52.1% 수준 (-194만원)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tenacity & Work Hours -->
+        <div class="bg-slate-50/80 rounded-xl p-5 border border-slate-200">
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-3">
+            <span>근속기간 & 취업시간</span>
+            <i class="fa-solid fa-business-time text-indigo-500"></i>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-center">
+            <div class="bg-white p-3 rounded-lg border border-slate-200">
+              <span class="text-[11px] text-slate-500 block mb-1">평균 근속기간</span>
+              <div class="text-xs text-emerald-600 font-bold mb-0.5">정규직: 108개월</div>
+              <div class="text-xs text-amber-600 font-bold">비정규: 36개월</div>
+              <span class="text-[10px] text-slate-400 mt-1 block">격차: 72개월 (3.0배)</span>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200">
+              <span class="text-[11px] text-slate-500 block mb-1">주당 평균시간</span>
+              <div class="text-xs text-emerald-600 font-bold mb-0.5">정규직: 40.4시간</div>
+              <div class="text-xs text-amber-600 font-bold">비정규: 29.5시간</div>
+              <span class="text-[10px] text-slate-400 mt-1 block">격차: -10.9시간</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Insurance & Welfare Comparison Chart -->
+        <div class="h-44 relative">
+          <canvas id="chart-welfare-radar"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: 17개 시도별 고용 현황 테이블 및 비교 -->
+    <section class="glass-card rounded-2xl p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+        <div>
+          <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-map-location-dot text-indigo-600"></i>
+            17개 시도별 비정규직 근로자 현황 및 증감 (2025-2026)
+          </h3>
+          <p class="text-xs text-slate-500 mt-1">지역별 임금근로자, 정규직, 비정규직 규모 및 비정규직 비중</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="text" id="region-search" placeholder="시도명 검색..." oninput="filterRegions()" 
+                 class="px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="overflow-x-auto custom-scroll rounded-xl border border-slate-200">
+        <table class="w-full text-left text-xs text-slate-600 divide-y divide-slate-200">
+          <thead class="bg-slate-100 text-slate-700 font-semibold">
+            <tr>
+              <th class="px-4 py-3">시도</th>
+              <th class="px-4 py-3 text-right">2026 임금근로자 (천명)</th>
+              <th class="px-4 py-3 text-right">2026 정규직 (천명)</th>
+              <th class="px-4 py-3 text-right">2026 비정규직 (천명)</th>
+              <th class="px-4 py-3 text-right">비정규직 비중 (%)</th>
+              <th class="px-4 py-3 text-right">전년대비 비정규 증감 (천명)</th>
+              <th class="px-4 py-3 text-center">비중 시각화</th>
+            </tr>
+          </thead>
+          <tbody id="region-table-body" class="divide-y divide-slate-100 bg-white">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs space-y-1">
+      <p>출처: 통계청 경제활동인구조사 근로형태별 부가조사 결과 (2026년 8월 기준 최종)</p>
+      <p class="text-slate-500">자동 생성된 반응형 데이터 시각화 인터랙티브 대시보드</p>
+    </div>
+  </footer>
+
+  <!-- Script: Data & Chart Rendering -->
+  <script>
+    // Embedded Data
+    const rawData = {
+  "years": [
+    "2019",
+    "2020",
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025",
+    "2026"
+  ],
+  "sheet1_all": {
+    "구분": [
+      2019.0,
+      2020.0,
+      2021.0,
+      2022.0,
+      2023.0,
+      2024.0,
+      2025.0,
+      2026.0
+    ],
+    "임금근로자": [
+      20559.0,
+      20446.0,
+      20992.0,
+      21724.0,
+      21954.0,
+      22143.0,
+      22413.0,
+      22526.0
+    ],
+    "정규직": [
+      13078.0,
+      13020.0,
+      12927.0,
+      13568.0,
+      13832.0,
+      13685.0,
+      13845.0,
+      13855.0
+    ],
+    "비정규직": [
+      7481.0,
+      7426.0,
+      8066.0,
+      8156.0,
+      8122.0,
+      8459.0,
+      8568.0,
+      8671.0
+    ],
+    "비중(%)": [
+      36.4,
+      36.3,
+      38.4,
+      37.5,
+      37.0,
+      38.2,
+      38.2,
+      38.5
+    ],
+    "한시적": [
+      4785.0,
+      4608.0,
+      5171.0,
+      5348.0,
+      5259.0,
+      5628.0,
+      5848.0,
+      6035.0
+    ],
+    "시간제": [
+      3156.0,
+      3252.0,
+      3512.0,
+      3687.0,
+      3873.0,
+      4256.0,
+      4229.0,
+      4382.0
+    ],
+    "비전형": [
+      2045.0,
+      2073.0,
+      2278.0,
+      2131.0,
+      1957.0,
+      1903.0,
+      1834.0,
+      1786.0
+    ]
+  },
+  "sheet1_male": {
+    "구분": [
+      2019.0,
+      2020.0,
+      2021.0,
+      2022.0,
+      2023.0,
+      2024.0,
+      2025.0,
+      2026.0
+    ],
+    "임금근로자": [
+      11396.0,
+      11361.0,
+      11517.0,
+      11936.0,
+      11927.0,
+      11908.0,
+      11953.0,
+      11965.0
+    ],
+    "정규직": [
+      8040.0,
+      8027.0,
+      7941.0,
+      8283.0,
+      8370.0,
+      8293.0,
+      8302.0,
+      8258.0
+    ],
+    "비정규직": [
+      3356.0,
+      3335.0,
+      3575.0,
+      3653.0,
+      3557.0,
+      3615.0,
+      3650.0,
+      3708.0
+    ],
+    "비중(%)": [
+      29.4,
+      29.4,
+      31.0,
+      30.6,
+      29.8,
+      30.4,
+      30.5,
+      31.0
+    ],
+    "한시적": [
+      2238.0,
+      2079.0,
+      2234.0,
+      2368.0,
+      2349.0,
+      2470.0,
+      2570.0,
+      2706.0
+    ],
+    "시간제": [
+      846.0,
+      915.0,
+      1011.0,
+      1125.0,
+      1143.0,
+      1240.0,
+      1187.0,
+      1245.0
+    ],
+    "비전형": [
+      1125.0,
+      1212.0,
+      1342.0,
+      1209.0,
+      1090.0,
+      1065.0,
+      1006.0,
+      942.0
+    ]
+  },
+  "sheet1_female": {
+    "구분": [
+      2019.0,
+      2020.0,
+      2021.0,
+      2022.0,
+      2023.0,
+      2024.0,
+      2025.0,
+      2026.0
+    ],
+    "임금근로자": [
+      9163.0,
+      9085.0,
+      9476.0,
+      9788.0,
+      10027.0,
+      10235.0,
+      10460.0,
+      10561.0
+    ],
+    "정규직": [
+      5038.0,
+      4994.0,
+      4985.0,
+      5285.0,
+      5462.0,
+      5392.0,
+      5543.0,
+      5597.0
+    ],
+    "비정규직": [
+      4125.0,
+      4091.0,
+      4491.0,
+      4503.0,
+      4565.0,
+      4844.0,
+      4918.0,
+      4963.0
+    ],
+    "비중(%)": [
+      45.0,
+      45.0,
+      47.4,
+      46.0,
+      45.5,
+      47.3,
+      47.0,
+      47.0
+    ],
+    "한시적": [
+      2547.0,
+      2529.0,
+      2938.0,
+      2980.0,
+      2910.0,
+      3158.0,
+      3278.0,
+      3329.0
+    ],
+    "시간제": [
+      2310.0,
+      2337.0,
+      2502.0,
+      2562.0,
+      2731.0,
+      3016.0,
+      3042.0,
+      3136.0
+    ],
+    "비전형": [
+      920.0,
+      861.0,
+      936.0,
+      922.0,
+      866.0,
+      838.0,
+      828.0,
+      844.0
+    ]
+  },
+  "age_distribution": {
+    "구분": [
+      2019.0,
+      2020.0,
+      2021.0,
+      2022.0,
+      2023.0,
+      2024.0,
+      2025.0,
+      2026.0
+    ],
+    "비정규직": [
+      7481.0,
+      7426.0,
+      8066.0,
+      8156.0,
+      8122.0,
+      8459.0,
+      8568.0,
+      8671.0
+    ],
+    "15 - 19세": [
+      2.0,
+      1.9,
+      1.8,
+      1.9,
+      1.9,
+      1.7,
+      1.3,
+      1.6
+    ],
+    "20 - 29세": [
+      18.2,
+      17.3,
+      17.5,
+      17.3,
+      17.5,
+      17.3,
+      16.7,
+      15.5
+    ],
+    "30 - 39세": [
+      14.8,
+      13.8,
+      12.6,
+      12.0,
+      12.2,
+      12.7,
+      13.3,
+      13.6
+    ],
+    "40 - 49세": [
+      18.0,
+      17.6,
+      17.6,
+      16.2,
+      16.1,
+      15.5,
+      14.1,
+      13.7
+    ],
+    "50 - 59세": [
+      21.0,
+      20.8,
+      20.7,
+      21.1,
+      20.0,
+      19.6,
+      19.1,
+      19.0
+    ],
+    "60세이상": [
+      25.9,
+      28.7,
+      29.8,
+      31.3,
+      32.2,
+      33.2,
+      35.5,
+      36.7
+    ]
+  },
+  "industry_distribution": {
+    "구분": [
+      2019.0,
+      2020.0,
+      2021.0,
+      2022.0,
+      2023.0,
+      2024.0,
+      2025.0,
+      2026.0
+    ],
+    "비정규직": [
+      7481.0,
+      7426.0,
+      8066.0,
+      8156.0,
+      8122.0,
+      8459.0,
+      8568.0,
+      8671.0
+    ],
+    "농림어업": [
+      1.0,
+      1.0,
+      1.0,
+      0.8,
+      0.8,
+      0.7,
+      0.7,
+      0.6
+    ],
+    "제조업": [
+      8.9,
+      8.1,
+      7.8,
+      8.1,
+      8.0,
+      8.1,
+      7.7,
+      7.7
+    ],
+    "건설업": [
+      11.4,
+      11.6,
+      11.0,
+      10.4,
+      9.2,
+      8.7,
+      8.0,
+      7.8
+    ],
+    "도소매업": [
+      9.4,
+      9.7,
+      9.3,
+      9.2,
+      8.7,
+      8.8,
+      8.2,
+      8.1
+    ],
+    "운수창고업": [
+      2.9,
+      3.1,
+      3.3,
+      3.1,
+      3.3,
+      3.6,
+      4.0,
+      4.0
+    ],
+    "숙박음식업": [
+      10.2,
+      9.3,
+      8.6,
+      9.5,
+      9.7,
+      10.3,
+      9.5,
+      9.9
+    ],
+    "정보통신업": [
+      1.7,
+      1.6,
+      2.3,
+      2.5,
+      2.4,
+      2.4,
+      2.6,
+      2.3
+    ],
+    "금융보험업": [
+      3.7,
+      3.4,
+      3.7,
+      3.9,
+      3.8,
+      3.7,
+      3.8,
+      4.1
+    ],
+    "부동산업": [
+      2.6,
+      2.4,
+      2.6,
+      2.7,
+      2.6,
+      2.2,
+      2.4,
+      2.1
+    ],
+    "전문과학기술업": [
+      2.6,
+      2.4,
+      2.6,
+      2.3,
+      2.7,
+      3.1,
+      2.9,
+      2.9
+    ],
+    "사업시설지원업": [
+      11.6,
+      11.1,
+      11.0,
+      10.7,
+      10.7,
+      10.2,
+      10.1,
+      9.8
+    ],
+    "공공행정": [
+      5.0,
+      5.6,
+      4.9,
+      4.7,
+      4.8,
+      4.9,
+      4.6,
+      4.3
+    ],
+    "교육서비스": [
+      8.4,
+      7.9,
+      8.3,
+      8.6,
+      8.4,
+      8.3,
+      8.3,
+      8.0
+    ],
+    "보건사회복지업": [
+      13.1,
+      15.2,
+      16.8,
+      17.0,
+      18.4,
+      18.3,
+      20.5,
+      21.5
+    ],
+    "예술스포츠": [
+      2.6,
+      2.4,
+      2.2,
+      2.3,
+      2.6,
+      2.4,
+      2.4,
+      2.8
+    ],
+    "협회기타서비스": [
+      3.3,
+      3.2,
+      3.0,
+      3.0,
+      2.9,
+      3.2,
+      3.1,
+      3.0
+    ],
+    "기타": [
+      1.5,
+      1.8,
+      1.5,
+      1.3,
+      1.2,
+      1.1,
+      1.2,
+      1.1
+    ]
+  },
+  "occupation_distribution": {
+    "구분": [
+      2019.0,
+      2020.0,
+      2021.0,
+      2022.0,
+      2023.0,
+      2024.0,
+      2025.0,
+      2026.0
+    ],
+    "비정규직": [
+      7481.0,
+      7426.0,
+      8066.0,
+      8156.0,
+      8122.0,
+      8459.0,
+      8568.0,
+      8671.0
+    ],
+    "관리자ㆍ전문가": [
+      16.2,
+      15.2,
+      16.3,
+      16.6,
+      17.4,
+      17.2,
+      17.7,
+      17.7
+    ],
+    "사무 종사자": [
+      11.4,
+      10.6,
+      10.7,
+      10.4,
+      10.6,
+      10.4,
+      10.7,
+      10.4
+    ],
+    "서비스·판매 종사자": [
+      26.0,
+      25.4,
+      24.4,
+      25.4,
+      26.7,
+      26.8,
+      26.3,
+      27.1
+    ],
+    "농림어업 숙련종사자": [
+      0.5,
+      0.5,
+      0.4,
+      0.4,
+      0.4,
+      0.6,
+      0.5,
+      0.6
+    ],
+    "기능·기계조작 종사자": [
+      14.9,
+      14.8,
+      14.5,
+      13.8,
+      13.2,
+      12.4,
+      13.0,
+      12.6
+    ],
+    "단순노무 종사자": [
+      31.0,
+      33.5,
+      33.7,
+      33.3,
+      31.7,
+      32.7,
+      31.9,
+      31.7
+    ]
+  },
+  "conditions": {
+    "항목": {
+      "구분": [
+        2019.0,
+        2020.0,
+        2021.0,
+        2022.0,
+        2023.0,
+        2024.0,
+        2025.0,
+        2026.0
+      ]
+    },
+    "평균 근속기간 (개월)": {
+      "임금근로자": [
+        71.0,
+        72.0,
+        70.0,
+        72.0,
+        74.0,
+        76.0,
+        78.0,
+        80.0
+      ],
+      "정규직": [
+        94.0,
+        97.0,
+        96.0,
+        97.0,
+        98.0,
+        103.0,
+        105.0,
+        108.0
+      ],
+      "비정규직": [
+        29.0,
+        29.0,
+        29.0,
+        30.0,
+        32.0,
+        34.0,
+        35.0,
+        36.0
+      ]
+    },
+    "평균 취업시간 (시간)": {
+      "임금근로자": [
+        35.9,
+        37.1,
+        35.4,
+        34.7,
+        33.9,
+        32.4,
+        33.4,
+        36.2
+      ],
+      "정규직": [
+        38.8,
+        40.7,
+        38.7,
+        37.8,
+        36.9,
+        35.4,
+        36.5,
+        40.4
+      ],
+      "비정규직": [
+        30.8,
+        30.7,
+        30.2,
+        29.6,
+        28.7,
+        27.6,
+        28.2,
+        29.5
+      ]
+    },
+    "월평균임금 (만원)": {
+      "임금근로자": [
+        264.3,
+        268.1,
+        273.4,
+        288.0,
+        300.7,
+        312.8,
+        320.5,
+        330.5
+      ],
+      "정규직": [
+        316.5,
+        323.4,
+        333.6,
+        348.0,
+        362.3,
+        379.6,
+        389.6,
+        405.2
+      ],
+      "비정규직": [
+        172.9,
+        171.1,
+        176.9,
+        188.1,
+        195.7,
+        204.8,
+        208.8,
+        211.2
+      ]
+    },
+    "국민연금 가입률 (%)": {
+      "임금근로자": [
+        69.5,
+        69.8,
+        69.4,
+        70.0,
+        69.6,
+        68.8,
+        68.5,
+        68.5
+      ],
+      "정규직": [
+        87.5,
+        88.0,
+        88.8,
+        89.1,
+        88.0,
+        88.1,
+        87.9,
+        88.6
+      ],
+      "비정규직": [
+        37.9,
+        37.8,
+        38.4,
+        38.3,
+        38.4,
+        37.5,
+        37.1,
+        36.5
+      ]
+    },
+    "건강보험 가입률 (%)": {
+      "임금근로자": [
+        75.7,
+        76.7,
+        77.0,
+        78.5,
+        78.9,
+        78.6,
+        79.0,
+        79.3
+      ],
+      "정규직": [
+        91.5,
+        92.6,
+        93.6,
+        94.5,
+        94.3,
+        95.0,
+        95.0,
+        95.7
+      ],
+      "비정규직": [
+        48.0,
+        49.0,
+        50.3,
+        51.7,
+        52.6,
+        52.2,
+        53.2,
+        53.0
+      ]
+    },
+    "고용보험 가입률 (%)": {
+      "임금근로자": [
+        70.9,
+        72.6,
+        75.2,
+        77.0,
+        77.0,
+        77.0,
+        76.2,
+        77.0
+      ],
+      "정규직": [
+        87.2,
+        89.2,
+        90.9,
+        92.2,
+        91.9,
+        92.3,
+        91.8,
+        93.0
+      ],
+      "비정규직": [
+        44.9,
+        46.1,
+        52.6,
+        54.0,
+        54.2,
+        54.7,
+        53.7,
+        54.0
+      ]
+    },
+    "퇴직급여 수혜율 (%)": {
+      "임금근로자": [
+        74.0,
+        73.2,
+        74.0,
+        74.9,
+        76.3,
+        76.8,
+        76.6,
+        76.7
+      ],
+      "정규직": [
+        91.7,
+        91.9,
+        93.5,
+        94.0,
+        94.5,
+        95.6,
+        95.6,
+        96.2
+      ],
+      "비정규직": [
+        42.9,
+        40.4,
+        42.7,
+        43.0,
+        45.3,
+        46.4,
+        46.0,
+        45.7
+      ]
+    },
+    "상여금 수혜율 (%)": {
+      "임금근로자": [
+        68.8,
+        68.8,
+        67.1,
+        69.9,
+        70.1,
+        70.3,
+        70.2,
+        70.1
+      ],
+      "정규직": [
+        86.4,
+        86.6,
+        86.7,
+        88.8,
+        88.1,
+        89.0,
+        89.0,
+        89.5
+      ],
+      "비정규직": [
+        38.2,
+        37.6,
+        35.7,
+        38.5,
+        39.4,
+        40.1,
+        39.7,
+        39.2
+      ]
+    },
+    "시간외수당 수혜율 (%)": {
+      "임금근로자": [
+        48.2,
+        50.0,
+        50.6,
+        53.0,
+        54.0,
+        54.6,
+        54.6,
+        55.0
+      ],
+      "정규직": [
+        60.9,
+        62.8,
+        64.9,
+        67.5,
+        67.8,
+        68.7,
+        69.1,
+        69.9
+      ],
+      "비정규직": [
+        25.9,
+        27.5,
+        27.6,
+        28.9,
+        30.5,
+        31.8,
+        31.2,
+        31.1
+      ]
+    },
+    "유급휴가 수혜율 (%)": {
+      "임금근로자": [
+        62.9,
+        64.6,
+        64.7,
+        66.3,
+        67.7,
+        68.5,
+        68.8,
+        69.1
+      ],
+      "정규직": [
+        80.1,
+        82.1,
+        83.3,
+        84.5,
+        85.6,
+        86.9,
+        87.2,
+        88.3
+      ],
+      "비정규직": [
+        33.0,
+        34.1,
+        35.1,
+        35.9,
+        37.2,
+        38.7,
+        39.0,
+        38.4
+      ]
+    }
+  },
+  "regions": [
+    {
+      "region": "전국",
+      "total_2025": 22413.0,
+      "reg_2025": 13845.0,
+      "nonreg_2025": 8568.0,
+      "total_2026": 22526.0,
+      "reg_2026": 13855.0,
+      "nonreg_2026": 8671.0,
+      "chg_total": 113.0,
+      "chg_reg": 10.0,
+      "chg_nonreg": 103.0,
+      "rate_2026": 38.5
+    },
+    {
+      "region": "서울",
+      "total_2025": 4375.0,
+      "reg_2025": 2696.0,
+      "nonreg_2025": 1679.0,
+      "total_2026": 4326.0,
+      "reg_2026": 2672.0,
+      "nonreg_2026": 1654.0,
+      "chg_total": -50.0,
+      "chg_reg": -24.0,
+      "chg_nonreg": -26.0,
+      "rate_2026": 38.2
+    },
+    {
+      "region": "전남광주",
+      "total_2025": 1264.0,
+      "reg_2025": 671.0,
+      "nonreg_2025": 593.0,
+      "total_2026": 1260.0,
+      "reg_2026": 685.0,
+      "nonreg_2026": 575.0,
+      "chg_total": -4.0,
+      "chg_reg": 14.0,
+      "chg_nonreg": -18.0,
+      "rate_2026": 45.6
+    },
+    {
+      "region": "광주",
+      "total_2025": 633.0,
+      "reg_2025": 354.0,
+      "nonreg_2025": 278.0,
+      "total_2026": 633.0,
+      "reg_2026": 360.0,
+      "nonreg_2026": 272.0,
+      "chg_total": 0.0,
+      "chg_reg": 6.0,
+      "chg_nonreg": -6.0,
+      "rate_2026": 43.0
+    },
+    {
+      "region": "전남",
+      "total_2025": 631.0,
+      "reg_2025": 316.0,
+      "nonreg_2025": 315.0,
+      "total_2026": 627.0,
+      "reg_2026": 325.0,
+      "nonreg_2026": 303.0,
+      "chg_total": -4.0,
+      "chg_reg": 9.0,
+      "chg_nonreg": -12.0,
+      "rate_2026": 48.3
+    },
+    {
+      "region": "부산",
+      "total_2025": 1383.0,
+      "reg_2025": 830.0,
+      "nonreg_2025": 553.0,
+      "total_2026": 1386.0,
+      "reg_2026": 808.0,
+      "nonreg_2026": 578.0,
+      "chg_total": 3.0,
+      "chg_reg": -22.0,
+      "chg_nonreg": 25.0,
+      "rate_2026": 41.7
+    },
+    {
+      "region": "대구",
+      "total_2025": 913.0,
+      "reg_2025": 561.0,
+      "nonreg_2025": 353.0,
+      "total_2026": 908.0,
+      "reg_2026": 540.0,
+      "nonreg_2026": 368.0,
+      "chg_total": -5.0,
+      "chg_reg": -21.0,
+      "chg_nonreg": 16.0,
+      "rate_2026": 40.5
+    },
+    {
+      "region": "인천",
+      "total_2025": 1384.0,
+      "reg_2025": 851.0,
+      "nonreg_2025": 533.0,
+      "total_2026": 1429.0,
+      "reg_2026": 847.0,
+      "nonreg_2026": 582.0,
+      "chg_total": 45.0,
+      "chg_reg": -3.0,
+      "chg_nonreg": 48.0,
+      "rate_2026": 40.7
+    },
+    {
+      "region": "대전",
+      "total_2025": 643.0,
+      "reg_2025": 385.0,
+      "nonreg_2025": 258.0,
+      "total_2026": 648.0,
+      "reg_2026": 371.0,
+      "nonreg_2026": 278.0,
+      "chg_total": 6.0,
+      "chg_reg": -15.0,
+      "chg_nonreg": 20.0,
+      "rate_2026": 42.9
+    },
+    {
+      "region": "울산",
+      "total_2025": 478.0,
+      "reg_2025": 305.0,
+      "nonreg_2025": 173.0,
+      "total_2026": 485.0,
+      "reg_2026": 290.0,
+      "nonreg_2026": 195.0,
+      "chg_total": 7.0,
+      "chg_reg": -15.0,
+      "chg_nonreg": 22.0,
+      "rate_2026": 40.2
+    },
+    {
+      "region": "세종",
+      "total_2025": 177.0,
+      "reg_2025": 124.0,
+      "nonreg_2025": 53.0,
+      "total_2026": 183.0,
+      "reg_2026": 126.0,
+      "nonreg_2026": 57.0,
+      "chg_total": 6.0,
+      "chg_reg": 2.0,
+      "chg_nonreg": 4.0,
+      "rate_2026": 31.1
+    },
+    {
+      "region": "경기",
+      "total_2025": 6320.0,
+      "reg_2025": 4180.0,
+      "nonreg_2025": 2140.0,
+      "total_2026": 6403.0,
+      "reg_2026": 4230.0,
+      "nonreg_2026": 2173.0,
+      "chg_total": 83.0,
+      "chg_reg": 50.0,
+      "chg_nonreg": 33.0,
+      "rate_2026": 33.9
+    },
+    {
+      "region": "강원",
+      "total_2025": 611.0,
+      "reg_2025": 294.0,
+      "nonreg_2025": 318.0,
+      "total_2026": 621.0,
+      "reg_2026": 317.0,
+      "nonreg_2026": 304.0,
+      "chg_total": 10.0,
+      "chg_reg": 24.0,
+      "chg_nonreg": -14.0,
+      "rate_2026": 49.0
+    },
+    {
+      "region": "충북",
+      "total_2025": 705.0,
+      "reg_2025": 428.0,
+      "nonreg_2025": 277.0,
+      "total_2026": 706.0,
+      "reg_2026": 425.0,
+      "nonreg_2026": 281.0,
+      "chg_total": 2.0,
+      "chg_reg": -2.0,
+      "chg_nonreg": 4.0,
+      "rate_2026": 39.8
+    },
+    {
+      "region": "충남",
+      "total_2025": 938.0,
+      "reg_2025": 566.0,
+      "nonreg_2025": 373.0,
+      "total_2026": 975.0,
+      "reg_2026": 608.0,
+      "nonreg_2026": 367.0,
+      "chg_total": 37.0,
+      "chg_reg": 42.0,
+      "chg_nonreg": -6.0,
+      "rate_2026": 37.6
+    },
+    {
+      "region": "전북",
+      "total_2025": 693.0,
+      "reg_2025": 405.0,
+      "nonreg_2025": 288.0,
+      "total_2026": 685.0,
+      "reg_2026": 397.0,
+      "nonreg_2026": 289.0,
+      "chg_total": -8.0,
+      "chg_reg": -8.0,
+      "chg_nonreg": 0.0,
+      "rate_2026": 42.2
+    },
+    {
+      "region": "경북",
+      "total_2025": 978.0,
+      "reg_2025": 592.0,
+      "nonreg_2025": 386.0,
+      "total_2026": 960.0,
+      "reg_2026": 565.0,
+      "nonreg_2026": 396.0,
+      "chg_total": -18.0,
+      "chg_reg": -27.0,
+      "chg_nonreg": 10.0,
+      "rate_2026": 41.3
+    },
+    {
+      "region": "경남",
+      "total_2025": 1278.0,
+      "reg_2025": 798.0,
+      "nonreg_2025": 480.0,
+      "total_2026": 1273.0,
+      "reg_2026": 819.0,
+      "nonreg_2026": 454.0,
+      "chg_total": -5.0,
+      "chg_reg": 21.0,
+      "chg_nonreg": -26.0,
+      "rate_2026": 35.7
+    },
+    {
+      "region": "제주",
+      "total_2025": 274.0,
+      "reg_2025": 162.0,
+      "nonreg_2025": 112.0,
+      "total_2026": 278.0,
+      "reg_2026": 156.0,
+      "nonreg_2026": 122.0,
+      "chg_total": 5.0,
+      "chg_reg": -6.0,
+      "chg_nonreg": 10.0,
+      "rate_2026": 43.9
+    }
+  ]
+};
+
+    let currentGender = 'all';
+    let trendChart = null;
+    let subtypeChart = null;
+    let ageChart = null;
+    let industryChart = null;
+    let radarChart = null;
+
+    // Helper formatter
+    const numFmt = (n) => Number(n).toLocaleString('ko-KR');
+
+    // Initialize Dashboard
+    document.addEventListener('DOMContentLoaded', () => {
+      renderKPIs();
+      initCharts();
+      renderRegionTable();
+    });
+
+    // Switch Gender Filter
+    function setGenderFilter(gender) {
+      currentGender = gender;
+      
+      // Update Button Styles
+      ['all', 'male', 'female'].forEach(g => {
+        const btn = document.getElementById(`btn-${g}`);
+        if (g === gender) {
+          btn.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm";
+        } else {
+          btn.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white";
+        }
+      });
+
+      const labelMap = { all: "전체", male: "남성", female: "여성" };
+      document.getElementById("kpi-target-title").innerText = `2026년 8월 핵심 고용 지표 (${labelMap[gender]})`;
+
+      renderKPIs();
+      updateTrendChart();
+      updateSubtypeChart();
+    }
+
+    // Render KPI Cards
+    function renderKPIs() {
+      const targetData = currentGender === 'all' ? rawData.sheet1_all 
+                       : (currentGender === 'male' ? rawData.sheet1_male : rawData.sheet1_female);
+
+      const totalEmp26 = targetData["임금근로자"][7];
+      const totalEmp25 = targetData["임금근로자"][6];
+      const diffTotal = totalEmp26 - totalEmp25;
+      const rateDiffTotal = ((diffTotal / totalEmp25) * 100).toFixed(1);
+
+      const regEmp26 = targetData["정규직"][7];
+      const regEmp25 = targetData["정규직"][6];
+      const diffReg = regEmp26 - regEmp25;
+      const rateDiffReg = ((diffReg / regEmp25) * 100).toFixed(1);
+
+      const nonRegEmp26 = targetData["비정규직"][7];
+      const nonRegEmp25 = targetData["비정규직"][6];
+      const diffNonReg = nonRegEmp26 - nonRegEmp25;
+      const rateDiffNonReg = ((diffNonReg / nonRegEmp25) * 100).toFixed(1);
+
+      const ratio26 = targetData["비중(%)"][7];
+      const ratio25 = targetData["비중(%)"][6];
+      const diffRatio = (ratio26 - ratio25).toFixed(1);
+
+      // Total Emp
+      document.getElementById("kpi-total-emp").innerText = numFmt(totalEmp26);
+      document.getElementById("kpi-total-emp-diff").innerHTML = `
+        <span class="${diffTotal >= 0 ? 'text-emerald-600' : 'text-rose-600'} font-semibold flex items-center gap-1">
+          <i class="fa-solid fa-arrow-trend-${diffTotal >= 0 ? 'up' : 'down'}"></i>
+          ${diffTotal >= 0 ? '+' : ''}${numFmt(diffTotal)}천명 (${diffTotal >= 0 ? '+' : ''}${rateDiffTotal}%)
+        </span>
+        <span class="text-slate-400 ml-1.5">전년 대비</span>
+      `;
+
+      // Reg Emp
+      document.getElementById("kpi-reg-emp").innerText = numFmt(regEmp26);
+      document.getElementById("kpi-reg-emp-diff").innerHTML = `
+        <span class="${diffReg >= 0 ? 'text-emerald-600' : 'text-rose-600'} font-semibold flex items-center gap-1">
+          <i class="fa-solid fa-arrow-trend-${diffReg >= 0 ? 'up' : 'down'}"></i>
+          ${diffReg >= 0 ? '+' : ''}${numFmt(diffReg)}천명 (${diffReg >= 0 ? '+' : ''}${rateDiffReg}%)
+        </span>
+        <span class="text-slate-400 ml-1.5">전년 대비</span>
+      `;
+
+      // NonReg Emp
+      document.getElementById("kpi-nonreg-emp").innerText = numFmt(nonRegEmp26);
+      document.getElementById("kpi-nonreg-emp-diff").innerHTML = `
+        <span class="${diffNonReg >= 0 ? 'text-rose-600' : 'text-emerald-600'} font-semibold flex items-center gap-1">
+          <i class="fa-solid fa-arrow-trend-${diffNonReg >= 0 ? 'up' : 'down'}"></i>
+          ${diffNonReg >= 0 ? '+' : ''}${numFmt(diffNonReg)}천명 (${diffNonReg >= 0 ? '+' : ''}${rateDiffNonReg}%)
+        </span>
+        <span class="text-slate-400 ml-1.5">전년 대비</span>
+      `;
+
+      // Ratio
+      document.getElementById("kpi-nonreg-ratio").innerText = ratio26.toFixed(1);
+      document.getElementById("kpi-nonreg-ratio-diff").innerHTML = `
+        <span class="${diffRatio >= 0 ? 'text-rose-600' : 'text-emerald-600'} font-semibold flex items-center gap-1">
+          <i class="fa-solid fa-arrow-trend-${diffRatio >= 0 ? 'up' : 'down'}"></i>
+          ${diffRatio >= 0 ? '+' : ''}${diffRatio}%p
+        </span>
+        <span class="text-slate-400 ml-1.5">전년 대비</span>
+      `;
+
+      // Subtypes text
+      document.getElementById("detail-term").innerText = `${numFmt(targetData["한시적"][7])} 천명`;
+      document.getElementById("detail-part").innerText = `${numFmt(targetData["시간제"][7])} 천명`;
+      document.getElementById("detail-atyp").innerText = `${numFmt(targetData["비전형"][7])} 천명`;
+    }
+
+    // Initialize Charts
+    function initCharts() {
+      // 1. Trend Chart
+      const ctxTrend = document.getElementById('chart-trends').getContext('2d');
+      trendChart = new Chart(ctxTrend, {
+        type: 'bar',
+        data: getTrendData(),
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+            tooltip: {
+              padding: 10,
+              callbacks: {
+                label: function(c) {
+                  let val = c.raw;
+                  return c.dataset.yAxisID === 'y1' ? `${c.dataset.label}: ${val}%` : `${c.dataset.label}: ${numFmt(val)}천명`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: { display: true, text: '근로자 수 (천명)', font: { size: 10 } },
+              grid: { color: 'rgba(226, 232, 240, 0.6)' }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: { display: true, text: '비정규직 비중 (%)', font: { size: 10 } },
+              min: 20,
+              max: 55,
+              grid: { drawOnChartArea: false }
+            }
+          }
+        }
+      });
+
+      // 2. Subtypes Doughnut Chart
+      const ctxSub = document.getElementById('chart-subtypes').getContext('2d');
+      subtypeChart = new Chart(ctxSub, {
+        type: 'doughnut',
+        data: getSubtypeData(),
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }
+          },
+          cutout: '65%'
+        }
+      });
+
+      // 3. Age Group Chart
+      const ctxAge = document.getElementById('chart-age').getContext('2d');
+      const ageLabels = ["15 - 19세", "20 - 29세", "30 - 39세", "40 - 49세", "50 - 59세", "60세이상"];
+      const ageColors = ["#cbd5e1", "#60a5fa", "#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
+      
+      const ageDatasets = ageLabels.map((lbl, idx) => ({
+        label: lbl,
+        data: rawData.age_distribution[lbl],
+        borderColor: ageColors[idx],
+        backgroundColor: ageColors[idx],
+        tension: 0.3,
+        borderWidth: lbl === "60세이상" ? 3 : 1.5,
+        pointRadius: lbl === "60세이상" ? 4 : 2
+      }));
+
+      ageChart = new Chart(ctxAge, {
+        type: 'line',
+        data: {
+          labels: rawData.years,
+          datasets: ageDatasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } }
+          },
+          scales: {
+            y: { title: { display: true, text: '비중 (%)' }, grid: { color: 'rgba(226, 232, 240, 0.6)' } }
+          }
+        }
+      });
+
+      // 4. Industry Bar Chart (Top 10)
+      const ctxInd = document.getElementById('chart-industry').getContext('2d');
+      const indKeys = Object.keys(rawData.industry_distribution).filter(k => k !== "구분" && k !== "비정규직");
+      const ind2026 = indKeys.map(k => ({
+        name: k,
+        val: rawData.industry_distribution[k][7]
+      })).sort((a, b) => b.val - a.val).slice(0, 10);
+
+      industryChart = new Chart(ctxInd, {
+        type: 'bar',
+        data: {
+          labels: ind2026.map(i => i.name),
+          datasets: [{
+            label: '2026년 비중 (%)',
+            data: ind2026.map(i => i.val),
+            backgroundColor: '#6366f1',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(226, 232, 240, 0.6)' }, max: 25 }
+          }
+        }
+      });
+
+      // 5. Welfare & Social Insurance Radar/Grouped Bar
+      const ctxRadar = document.getElementById('chart-welfare-radar').getContext('2d');
+      const metrics = ["국민연금 가입률 (%)", "건강보험 가입률 (%)", "고용보험 가입률 (%)", "퇴직급여 수혜율 (%)", "상여금 수혜율 (%)", "유급휴가 수혜율 (%)"];
+      const shortLabels = ["국민연금", "건강보험", "고용보험", "퇴직급여", "상여금", "유급휴가"];
+      const regWelfare = metrics.map(m => rawData.conditions[m]["정규직"][7]);
+      const nonregWelfare = metrics.map(m => rawData.conditions[m]["비정규직"][7]);
+
+      radarChart = new Chart(ctxRadar, {
+        type: 'bar',
+        data: {
+          labels: shortLabels,
+          datasets: [
+            {
+              label: '정규직 (%)',
+              data: regWelfare,
+              backgroundColor: '#10b981',
+              borderRadius: 4
+            },
+            {
+              label: '비정규직 (%)',
+              data: nonregWelfare,
+              backgroundColor: '#f59e0b',
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+            title: { display: true, text: '사회보험 및 근로복지 수혜율 비교 (%)', font: { size: 11 } }
+          },
+          scales: {
+            y: { max: 100, grid: { color: 'rgba(226, 232, 240, 0.6)' } }
+          }
+        }
+      });
+    }
+
+    function getTrendData() {
+      const targetData = currentGender === 'all' ? rawData.sheet1_all 
+                       : (currentGender === 'male' ? rawData.sheet1_male : rawData.sheet1_female);
+
+      return {
+        labels: rawData.years,
+        datasets: [
+          {
+            type: 'bar',
+            label: '정규직',
+            data: targetData["정규직"],
+            backgroundColor: 'rgba(16, 185, 129, 0.85)',
+            borderRadius: 4,
+            yAxisID: 'y'
+          },
+          {
+            type: 'bar',
+            label: '비정규직',
+            data: targetData["비정규직"],
+            backgroundColor: 'rgba(245, 158, 11, 0.85)',
+            borderRadius: 4,
+            yAxisID: 'y'
+          },
+          {
+            type: 'line',
+            label: '비정규직 비중 (%)',
+            data: targetData["비중(%)"],
+            borderColor: '#ef4444',
+            backgroundColor: '#ef4444',
+            borderWidth: 2.5,
+            pointRadius: 4,
+            yAxisID: 'y1'
+          }
+        ]
+      };
+    }
+
+    function getSubtypeData() {
+      const targetData = currentGender === 'all' ? rawData.sheet1_all 
+                       : (currentGender === 'male' ? rawData.sheet1_male : rawData.sheet1_female);
+
+      return {
+        labels: ['한시적', '시간제', '비전형'],
+        datasets: [{
+          data: [targetData["한시적"][7], targetData["시간제"][7], targetData["비전형"][7]],
+          backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444'],
+          borderWidth: 2,
+          borderColor: '#ffffff'
+        }]
+      };
+    }
+
+    function updateTrendChart() {
+      if (!trendChart) return;
+      trendChart.data = getTrendData();
+      trendChart.update();
+    }
+
+    function updateSubtypeChart() {
+      if (!subtypeChart) return;
+      subtypeChart.data = getSubtypeData();
+      subtypeChart.update();
+    }
+
+    // Render 17 Region Table
+    function renderRegionTable(filterText = "") {
+      const tbody = document.getElementById("region-table-body");
+      tbody.innerHTML = "";
+
+      const filtered = rawData.regions.filter(r => r.region.includes(filterText));
+
+      filtered.forEach(r => {
+        const isNation = r.region === "전국";
+        const tr = document.createElement("tr");
+        tr.className = isNation ? "bg-slate-100/90 font-bold text-slate-900" : "hover:bg-slate-50 transition";
+
+        const chgClass = r.chg_nonreg > 0 ? "text-rose-600 font-semibold" : (r.chg_nonreg < 0 ? "text-blue-600 font-semibold" : "text-slate-500");
+        const chgSign = r.chg_nonreg > 0 ? "+" : "";
+
+        tr.innerHTML = `
+          <td class="px-4 py-3 font-medium flex items-center gap-2">
+            ${isNation ? '<span class="w-1.5 h-4 bg-indigo-600 rounded"></span>' : ''}
+            ${r.region}
+          </td>
+          <td class="px-4 py-3 text-right">${numFmt(r.total_2026)}</td>
+          <td class="px-4 py-3 text-right text-emerald-700">${numFmt(r.reg_2026)}</td>
+          <td class="px-4 py-3 text-right text-amber-700 font-semibold">${numFmt(r.nonreg_2026)}</td>
+          <td class="px-4 py-3 text-right font-bold text-slate-800">${r.rate_2026}%</td>
+          <td class="px-4 py-3 text-right ${chgClass}">${chgSign}${numFmt(r.chg_nonreg)}</td>
+          <td class="px-4 py-3 text-center">
+            <div class="w-24 bg-slate-200 rounded-full h-2 mx-auto overflow-hidden">
+              <div class="bg-indigo-600 h-2 rounded-full" style="width: ${Math.min(r.rate_2026 * 1.8, 100)}%"></div>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterRegions() {
+      const q = document.getElementById("region-search").value.trim();
+      renderRegionTable(q);
+    }
+  </script>
+</body>
+</html>
